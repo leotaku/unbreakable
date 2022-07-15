@@ -51,48 +51,40 @@ function parseTimestamp(datestring: string): Date {
 }
 
 const durationMonth = 31 * 24 * 60 * 60 * 1000;
-var urls: Promise<{ elem: HTMLAnchorElement; avail: Availability }>[] = [];
 
-window.document.querySelectorAll("a").forEach((elem) =>
-  urls.push(
-    access(elem.href)
-      .then((avail) => {
-        if (avail.archived_snapshots.closest) {
-          let now = Date.now();
-          let archivedAt = parseTimestamp(
+const references = Array.from(window.document.querySelectorAll("a")).map((elem) =>
+  access(elem.href)
+    .then((avail) => {
+      if (avail.archived_snapshots.closest) {
+        return {
+          avail,
+          date: parseTimestamp(
             avail.archived_snapshots.closest.timestamp
-          );
-          if (now - archivedAt.getTime() > durationMonth) {
-            elem.insertAdjacentHTML(
-              "afterend",
-              `<a href="${avail.archived_snapshots.closest.url}" title="Click here for archive of content" style="text-decoration: none">⏰</a>`
-            );
-          }
-        } else {
-          elem.style.color = "darkgray";
-          elem.insertAdjacentHTML(
-            "afterend",
-            `<a href="#" title="No archive of content available" style="text-decoration: none">💀</a>`
-          );
-        }
-
-        return { elem, avail };
-      })
-      .catch(() => null)
-  )
+          ).getDate(),
+        };
+      }
+      return { avail, date: 0 };
+    })
+    .then(({ avail, date }) => {
+      if (date == 0) {
+        elem.style.color = "darkgray";
+        elem.insertAdjacentHTML(
+          "afterend",
+          `<a href="#" title="No archive of content available" style="text-decoration: none">💀</a>`
+        );
+      } else if (Date.now() - date > durationMonth) {
+        elem.insertAdjacentHTML(
+          "afterend",
+          `<a href="${avail.archived_snapshots.closest.url}" title="Click here for archive of content" style="text-decoration: none">⏰</a>`
+        );
+      }
+      return { elem, date };
+    })
 );
 
-Promise.all(urls).then((unsorted) =>
+Promise.all(references).then((unsorted) =>
   unsorted
-    .map((value) => {
-      var sort = new Date(0);
-      if (value.avail.archived_snapshots.closest) {
-        sort = parseTimestamp(value.avail.archived_snapshots.closest.timestamp);
-      }
-      return { value, sort };
-    })
-    .sort((a, b) => a.sort.getDate() - b.sort.getDate())
-    .map(({ value }) => value)
+    .sort((a, b) => a.date - b.date)
     .reduce((stack, { elem }) => {
       return stack
         .then(() => archive(elem.href))
