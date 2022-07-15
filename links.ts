@@ -1,7 +1,7 @@
 type Availability = {
   url: string;
   archived_snapshots: {
-    closest: {
+    closest?: {
       available: true;
       url: string;
       timestamp: string;
@@ -50,39 +50,66 @@ function parseTimestamp(datestring: string): Date {
   );
 }
 
+const durationMonth = 31 * 24 * 60 * 60 * 1000;
+var urls: Promise<{ elem: HTMLAnchorElement; avail: Availability }>[] = [];
+
 window.document.querySelectorAll("a").forEach((elem) =>
-  access(elem.href)
-    .then((avail) => {
-      if (avail.archived_snapshots.closest) {
-        let now = Date.now();
-        let archivedAt = parseTimestamp(
-          avail.archived_snapshots.closest.timestamp
-        );
-        if (now - archivedAt.getTime() > 31 * 24 * 60 * 60 * 1000) {
+  urls.push(
+    access(elem.href)
+      .then((avail) => {
+        if (avail.archived_snapshots.closest) {
+          let now = Date.now();
+          let archivedAt = parseTimestamp(
+            avail.archived_snapshots.closest.timestamp
+          );
+          if (now - archivedAt.getTime() > durationMonth) {
+            elem.insertAdjacentHTML(
+              "afterend",
+              `<a href="${avail.archived_snapshots.closest.url}" title="Click here for archive of content" style="text-decoration: none">⏰</a>`
+            );
+          }
+        } else {
+          elem.style.color = "darkgray";
           elem.insertAdjacentHTML(
             "afterend",
-            `<a href="${avail.archived_snapshots.closest.url}" title="Click here for archive of content" style="text-decoration: none">⏰</a>`
+            `<a href="#" title="No archive of content available" style="text-decoration: none">💀</a>`
           );
         }
-      } else {
-        elem.style.color = "darkgray";
-        elem.insertAdjacentHTML(
-          "afterend",
-          `<a href="#" title="No archive of content available" style="text-decoration: none">💀</a>`
-        );
-      }
-    })
-    .catch(() => {})
+
+        return { elem, avail };
+      })
+      .catch(() => null)
+  )
 );
 
-Array.from(window.document.querySelectorAll("a"))
-  .map((value) => ({ value, sort: Math.random() }))
-  .sort((a, b) => a.sort - b.sort)
-  .map(({ value }) => value)
-  .reduce((stack, elem) => {
-    return stack
-      .then(() => archive(elem.href))
-      .then(() => console.log("Archived:", elem.href))
-      .then(() => new Promise((resolve) => setTimeout(resolve, 11000)))
-      .catch(() => {});
-  }, Promise.resolve());
+Promise.all(urls).then((unsorted) =>
+  unsorted
+    .map((value) => {
+      var sort = new Date(0);
+      if (value.avail.archived_snapshots.closest) {
+        sort = parseTimestamp(value.avail.archived_snapshots.closest.timestamp);
+      }
+      return { value, sort };
+    })
+    .sort((a, b) => a.sort.getDate() - b.sort.getDate())
+    .map(({ value }) => value)
+    .reduce((stack, { elem }) => {
+      return stack
+        .then(() => archive(elem.href))
+        .then(() => console.log("Archived:", elem.href))
+        .then(() => new Promise((resolve) => setTimeout(resolve, 11000)))
+        .catch(() => {});
+    }, Promise.resolve())
+);
+
+// Array.from(window.document.querySelectorAll("a"))
+//   .map((value) => ({ value, sort: Math.random() }))
+//   .sort((a, b) => a.sort - b.sort)
+//   .map(({ value }) => value)
+//   .reduce((stack, elem) => {
+//     return stack
+//       .then(() => archive(elem.href))
+//       .then(() => console.log("Archived:", elem.href))
+//       .then(() => new Promise((resolve) => setTimeout(resolve, 11000)))
+//       .catch(() => {});
+//   }, Promise.resolve());
