@@ -1,3 +1,5 @@
+const durationMonth = 31 * 24 * 60 * 60 * 1000;
+
 type Availability = {
   url: string;
   archived_snapshots: {
@@ -49,8 +51,6 @@ function parseTimestamp(datestring: string): Date {
     parseInt(datestring.slice(12, 14))
   );
 }
-
-const durationMonth = 31 * 24 * 60 * 60 * 1000;
 
 const references = Array.from(window.document.querySelectorAll("a")).map((elem) =>
   access(elem.href)
