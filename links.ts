@@ -60,7 +60,7 @@ const references = Array.from(window.document.querySelectorAll("a")).map((elem) 
           avail,
           date: parseTimestamp(
             avail.archived_snapshots.closest.timestamp
-          ).getDate(),
+          ).getTime(),
         };
       }
       return { avail, date: 0 };
