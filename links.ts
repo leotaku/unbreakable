@@ -89,8 +89,7 @@ Promise.all(references).then((unsorted) =>
       return stack
         .then(() => archive(elem.href))
         .then(() => console.log("Archived:", elem.href))
-        .then(() => new Promise((resolve) => setTimeout(resolve, 11000)))
-        .catch(() => {});
+        .then(() => new Promise((resolve) => setTimeout(resolve, 11000)));
     }, Promise.resolve())
 );
 
