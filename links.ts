@@ -92,15 +92,3 @@ Promise.all(references).then((unsorted) =>
         .then(() => new Promise((resolve) => setTimeout(resolve, 11000)));
     }, Promise.resolve())
 );
-
-// Array.from(window.document.querySelectorAll("a"))
-//   .map((value) => ({ value, sort: Math.random() }))
-//   .sort((a, b) => a.sort - b.sort)
-//   .map(({ value }) => value)
-//   .reduce((stack, elem) => {
-//     return stack
-//       .then(() => archive(elem.href))
-//       .then(() => console.log("Archived:", elem.href))
-//       .then(() => new Promise((resolve) => setTimeout(resolve, 11000)))
-//       .catch(() => {});
-//   }, Promise.resolve());
