@@ -52,8 +52,9 @@ function parseTimestamp(datestring: string): Date {
   );
 }
 
-const references = Array.from(window.document.querySelectorAll("a")).map(
-  (elem) =>
+const references = Array.from(window.document.querySelectorAll("a"))
+  .filter((elem) => elem.href.startsWith("http"))
+  .map((elem) =>
     access(elem.href)
       .then((avail) => {
         if (avail.archived_snapshots.closest) {
@@ -81,7 +82,7 @@ const references = Array.from(window.document.querySelectorAll("a")).map(
         }
         return { elem, date };
       })
-);
+  );
 
 Promise.all(references).then((unsorted) =>
   unsorted
