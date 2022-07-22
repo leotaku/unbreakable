@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "unbreakable",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./build/index.js",
+  "scripts": {
+    "build": "esbuild --bundle --minify --outdir=build index.ts"
+  },
+  "author": "Leo Gaskin <leo.gaskin@le0.gs>",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.14.16",
+    "prettier": "^2.7.1",
+    "typescript": "^4.5.5"
+  }
+}
