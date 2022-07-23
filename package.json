@@ -1,6 +1,6 @@
 {
   "private": false,
-  "name": "unbreakable",
+  "name": "@leotaku/unbreakable",
   "version": "0.0.1",
   "description": "",
   "main": "./build/unbreakable.js",
