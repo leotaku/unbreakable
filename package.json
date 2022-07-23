@@ -1,11 +1,23 @@
 {
-  "private": true,
+  "private": false,
   "name": "unbreakable",
   "version": "0.0.1",
   "description": "",
-  "main": "./build/index.js",
+  "main": "./build/unbreakable.js",
+  "files": [
+    "./unbreakable.ts",
+    "./build/"
+  ],
+  "exports": {
+    ".": {
+      "browser": "./build/unbreakable.js",
+      "import": "./build/unbreakable.mjs",
+      "require": "./build/unbreakable.cjs"
+    }
+  },
   "scripts": {
-    "build": "esbuild --bundle --minify --outdir=build index.ts"
+    "build": "node build.mjs",
+    "prepare": "npm run build"
   },
   "author": "Leo Gaskin <leo.gaskin@le0.gs>",
   "license": "MIT",
