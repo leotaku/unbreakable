@@ -62,7 +62,7 @@ const references = Array.from(window.document.querySelectorAll("a"))
       })
       .then(({ avail, date }) => {
         if (date == 0) {
-          elem.style.color = "darkgray";
+          elem.style.color = "gray";
           elem.insertAdjacentHTML(
             "afterend",
             `<a href="javascript:undefined" title="No archive of content available" style="text-decoration: none">💀</a>`
