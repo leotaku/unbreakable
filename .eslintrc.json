@@ -1,0 +1,9 @@
+{
+  "extends": ["plugin:compat/recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "env": {
+    "browser": true
+  }
+}

@@ -17,12 +17,16 @@
   },
   "scripts": {
     "build": "node build.mjs",
+    "lint": "eslint ./build/unbreakable.js",
     "prepare": "npm run build"
   },
   "author": "Leo Gaskin <leo.gaskin@le0.gs>",
   "license": "MIT",
   "devDependencies": {
+    "browserslist": "^4.21.2",
     "esbuild": "^0.14.16",
+    "eslint": "^8.20.0",
+    "eslint-plugin-compat": "^4.0.2",
     "prettier": "^2.7.1",
     "typescript": "^4.5.5"
   }
