@@ -65,7 +65,7 @@ const references = Array.from(window.document.querySelectorAll("a"))
           elem.style.color = "darkgray";
           elem.insertAdjacentHTML(
             "afterend",
-            `<a href="#" title="No archive of content available" style="text-decoration: none">💀</a>`
+            `<a href="javascript:undefined" title="No archive of content available" style="text-decoration: none">💀</a>`
           );
         } else if (Date.now() - date > durationMonth) {
           elem.insertAdjacentHTML(
