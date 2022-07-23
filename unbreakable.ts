@@ -19,22 +19,15 @@ function archive(url: string): Promise<Response> {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({
-      url: url,
-    }),
+    body: `url=${url}`,
   });
 }
 
 function access(url: string): Promise<Availability> {
-  return fetch(
-    "https://archive.org/wayback/available?" +
-      new URLSearchParams({
-        url: url.replace(/https?:\/\//i, ""),
-      }),
-    {
-      headers: { "Cache-Control": "no-cache" },
-    }
-  ).then((it) => it.json());
+  const uri = url.replace(/https?:\/\//i, "");
+  return fetch(`https://archive.org/wayback/available?url=${uri}`, {
+    headers: { "Cache-Control": "no-cache" },
+  }).then((it) => it.json());
 }
 
 function parseTimestamp(datestring: string): Date {
