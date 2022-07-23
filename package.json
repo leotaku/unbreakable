@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "lint": "eslint ./build/unbreakable.js",
+    "lint": "eslint build",
     "prepare": "npm run build"
   },
   "author": "Leo Gaskin <leo.gaskin@le0.gs>",
