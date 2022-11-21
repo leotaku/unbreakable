@@ -23,11 +23,17 @@ function archive(url: string): Promise<Response> {
   });
 }
 
-function access(url: string): Promise<Availability> {
-  const uri = url.replace(/https?:\/\//i, "");
-  return fetch(`https://archive.org/wayback/available?url=${uri}`, {
+function available(url: string): Promise<Availability> {
+  return fetch(`https://archive.org/wayback/available?url=${url}`, {
     headers: { "Cache-Control": "no-cache" },
   }).then((it) => it.json());
+}
+
+function anyAvailable(url: string): Promise<Availability> {
+  const url_no_prefix = url.replace(/https?:\/\//i, "");
+  return available(url).then((avail) =>
+    avail.archived_snapshots.closest ? avail : available(url_no_prefix)
+  );
 }
 
 function parseTimestamp(datestring: string): Date {
@@ -48,7 +54,7 @@ function parseTimestamp(datestring: string): Date {
 const references = Array.from(window.document.querySelectorAll("a"))
   .filter((elem) => elem.href.startsWith("http"))
   .map((elem) =>
-    access(elem.href)
+    anyAvailable(elem.href)
       .then((avail) => {
         if (avail.archived_snapshots.closest) {
           return {
